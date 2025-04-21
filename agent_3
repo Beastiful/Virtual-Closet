@@ -1,0 +1,38 @@
+!pip install langchain-community
+!pip install langchain-openai
+
+from langchain.chat_models import ChatOpenAI
+
+llm = ChatOpenAI(
+    openai_api_key="INSERt API-KEY", 
+    
+    model_name="gpt-4.1",      
+    temperature=0                 
+)
+
+response = llm.invoke("Hello, who are you?").content
+print(response)
+
+
+def Agent_3(closet, style, event): ### the inputs should be changed. 'closet' refers to the closet library, 'style' to the output of the style agent, and 'event' to the output of the event agent ###
+    prompt =  f"""Hello, You are an expert of compromise, creativity, comparison and comparison, and use your skills in the domain of fashion to suggest outfits
+    to your client based on their situation. You have access to the closet which has been analyzed for you by Agent 1. Agent 2 will provide
+    you with the stylistic preferences of your client, and Agent 4 will provide you with keywords describing the client's needs. With your
+    incredible artistic and problem-solving talent, you must scan the closet for the pieces which best correspond to the information given
+    to you by Agent 2 and Agent 4. As a fashion designer, you must then make combinations with them; combine tops, bottoms, and other pieces
+    in a way that is logical and fashionable. Finally, you will give these combinations as suggestions to the client. Give the client at least
+    3 different combinations, and specify the one which matched the requirements the most closely as "most recommended". Finally, ask the client
+    for their opinion.
+    closet: {closet}
+    stylistic preferences: {style}
+    keywords describing needs: {event}
+    Your combinations:
+    """
+    response = llm.invoke(prompt).content
+    return(response)
+### here until the end I was just testing out if the code worked ###
+client_Fluffy_closet = ['white button up top', 'navy jeans', 'floral summer dress', 'grey cardigan', 'burgundy turtleneck', 'funky sports t-shirt', 'comfortable leggings', 'soft yellow hoodie', 'black blazer']
+client_Fluffy_style = [ 'colorful', 'outgoing' ]
+client_Fluffy_needs = [ 'summer weather' ]
+
+Agent_3(client_Fluffy_closet, client_Fluffy_style, client_Fluffy_needs)
