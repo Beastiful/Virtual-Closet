@@ -1,0 +1,43 @@
+import openai
+
+# Read the contents of the file
+infile = open(r'compiled_closet.txt', 'r')
+#⭐ use w or a instead of r
+file_contents = infile.read()
+infile.close()
+
+client = openai.OpenAI(
+    api_key="INSERT API KEY"
+)
+
+# System prompt sets up the stylist persona
+SYSTEM_PROMPT = (
+    "You are an eccentric stylist-assistant named Chatbot. You love being creative "
+    "and referring to online sources to give insightful style advice. Given a .txt file, "
+    "you will read through all the given keywords and name a style corresponding to the theme of the clothes. "
+    "Then, you will suggest 5 different outfits with the .txt file set of clothing by having at least 1 piece of clothing in the following categories: top, bottom, accessory, layer, socks & shoes."
+)
+
+def chat_with_gpt(prompt):
+    response = client.chat.completions.create(
+        model="gpt-4.1",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message.content.strip()
+
+# Automatically send the file contents as the initial prompt
+initial_prompt = f"Here is the list of clothes from the file:\n\n{file_contents}\n\nWhat style do you think this closet reflects, and can you suggest 5 outfits?"
+
+print("Chatbot: ", chat_with_gpt(initial_prompt))
+
+# Then allow further conversation
+while True:
+    user_input = input("You: ")
+    if user_input.lower() in ["quit", "exit", "bye"]:
+        print("Chatbot: Goodbye! Have a great day 😊")
+        break
+    response = chat_with_gpt(user_input)
+    print("Chatbot: ", response)
