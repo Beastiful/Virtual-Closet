@@ -1,28 +1,35 @@
-!pip install langchain-community
-!pip install langchain-openai
+
+  
+
+# imports ChatGPT
 
 from langchain.chat_models import ChatOpenAI
 
 llm = ChatOpenAI(
-    openai_api_key="INSERt API-KEY", 
+    openai_api_key="insert key", 
     
     model_name="gpt-4.1",      
-    temperature=0                 
+    temperature=0 #i might consider increasing the temperature               
 )
 
-response = llm.invoke("Hello, who are you?").content
-print(response)
 
 
-def Agent_3(closet, style, event): ### the inputs should be changed. 'closet' refers to the closet library, 'style' to the output of the style agent, and 'event' to the output of the event agent ###
-    prompt =  f"""Hello, You are an expert of compromise, creativity, comparison and comparison, and use your skills in the domain of fashion to suggest outfits
-    to your client based on their situation. You have access to the closet which has been analyzed for you by Agent 1. Agent 2 will provide
-    you with the stylistic preferences of your client, and Agent 4 will provide you with keywords describing the client's needs. With your
+# reads files from 3 other agents !guys can you make sure that each of your agents ouputs a file that mine can read?
+closet = open(r'compiledcloset.txt','r')
+style = open(r'style.txt','r')
+event = open(r'event.txt','r')
+
+
+
+# gives the agent its role
+def Agent_3(closet, style, event):
+    prompt =  f""" You are an expert of compromise, creativity, and comparison, and use your skills in the domain of fashion to suggest outfits
+    to your client based on their situation. You have access to the closet of your client which has been analyzed for you enclosed in the 'closet' variable, you have been provided
+    with the stylistic preferences of your client in the 'style' variable, and keywords describing the client's needs in the 'event' variable. With your
     incredible artistic and problem-solving talent, you must scan the closet for the pieces which best correspond to the information given
-    to you by Agent 2 and Agent 4. As a fashion designer, you must then make combinations with them; combine tops, bottoms, and other pieces
+    to you about the client's style and needs. As a fashion designer, you must then make combinations with them; combine tops, bottoms, and other pieces
     in a way that is logical and fashionable. Finally, you will give these combinations as suggestions to the client. Give the client at least
-    3 different combinations, and specify the one which matched the requirements the most closely as "most recommended". Finally, ask the client
-    for their opinion.
+    3 different combinations, and specify the one which matched the requirements the most closely as "most recommended". 
     closet: {closet}
     stylistic preferences: {style}
     keywords describing needs: {event}
@@ -30,9 +37,33 @@ def Agent_3(closet, style, event): ### the inputs should be changed. 'closet' re
     """
     response = llm.invoke(prompt).content
     return(response)
-### here until the end I was just testing out if the code worked ###
-client_Fluffy_closet = ['white button up top', 'navy jeans', 'floral summer dress', 'grey cardigan', 'burgundy turtleneck', 'funky sports t-shirt', 'comfortable leggings', 'soft yellow hoodie', 'black blazer']
-client_Fluffy_style = [ 'colorful', 'outgoing' ]
-client_Fluffy_needs = [ 'summer weather' ]
 
-Agent_3(client_Fluffy_closet, client_Fluffy_style, client_Fluffy_needs)
+
+
+# the following code will save the outfit if the client liked it, or try again if the client did not.
+clientopinion = input('Do you like the proposed outfit? respond with either: Yes or No')
+
+# i imagine there being a file for saved outfits. i think this would be useful for the style agent (to be informed of what the user likes)
+#** I have a major problem here, which is I am not entirely sure how to save the outfit.
+try: 
+    if clientopinion == 'Yes':
+        newoutfitname = input('what do you want to name your new outfit?')
+        newoutfitname = open(r'saved_outfits','a')
+        print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
+
+# this code takes the client's feedback into consideration by sending it to the Event agent so it gets added as new needs in the event file, then restarts the program. 
+    elif clientopinion == 'No':
+        reason = input('My apologies, I will try to do better next time. What was wrong with the outfit?')
+        Event_Agent(reason)
+        print('got it. I\'ll try again with that in mind.')
+        Agent_3(closet,style,event)
+except:
+    print('I didn\'t quite understand your feedback. Please try again by typing one of the 2 proposed answers.')
+          
+
+
+
+
+
+
+
