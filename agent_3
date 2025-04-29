@@ -1,4 +1,4 @@
-
+##notes for self: a lot of try & excepts need to be added. will need to look more into file handling. will need to review how getting the 3 inputs will work. 
   
 
 # imports ChatGPT
@@ -23,13 +23,13 @@ event = open(r'event.txt','r')
 
 # gives the agent its role
 def Agent_3(closet, style, event):
-    prompt =  f""" You are an expert of compromise, creativity, and comparison, and use your skills in the domain of fashion to suggest outfits
-    to your client based on their situation. You have access to the closet of your client which has been analyzed for you enclosed in the 'closet' variable, you have been provided
-    with the stylistic preferences of your client in the 'style' variable, and keywords describing the client's needs in the 'event' variable. With your
+    prompt =  f"""Hello, You are an expert of compromise, creativity, comparison and comparison, and use your skills in the domain of fashion to suggest outfits
+    to your client based on their situation. You have access to the closet which has been analyzed for you by Agent 1. Agent 2 will provide
+    you with the stylistic preferences of your client, and Agent 4 will provide you with keywords describing the client's needs. With your
     incredible artistic and problem-solving talent, you must scan the closet for the pieces which best correspond to the information given
-    to you about the client's style and needs. As a fashion designer, you must then make combinations with them; combine tops, bottoms, and other pieces
+    to you by Agent 2 and Agent 4. As a fashion designer, you must then make combinations with them; combine tops, bottoms, and other pieces
     in a way that is logical and fashionable. Finally, you will give these combinations as suggestions to the client. Give the client at least
-    3 different combinations, and specify the one which matched the requirements the most closely as "most recommended". 
+    3 different combinations, with the respective names of 'combination one', 'combination two', and 'combination three'. Specify to the client 'combination one' as the one which matched the requirements the most closely as "most recommended".
     closet: {closet}
     stylistic preferences: {style}
     keywords describing needs: {event}
@@ -38,17 +38,34 @@ def Agent_3(closet, style, event):
     response = llm.invoke(prompt).content
     return(response)
 
+# sample data, to be replaced
+client_Fluffy_closet = ['white button up top', 'navy jeans', 'floral summer dress', 'grey cardigan', 'burgundy turtleneck', 'funky sports t-shirt', 'comfortable leggings', 'soft yellow hoodie', 'black blazer']
+client_Fluffy_style = [ 'colorful', 'outgoing' ]
+client_Fluffy_needs = [ 'summer weather' ]
 
+# this code saves the output in a file named 'new_outfits.txt' and also outputs it to the user.
+final_outfits = Agent_3(client_Fluffy_closet, client_Fluffy_style, client_Fluffy_needs)
+with open("new_outfits.txt", "w") as f:
+    f.write(final_outfits)
+print(final_outfits)
 
 # the following code will save the outfit if the client liked it, or try again if the client did not.
 clientopinion = input('Do you like the proposed outfit? respond with either: Yes or No')
 
 # i imagine there being a file for saved outfits. i think this would be useful for the style agent (to be informed of what the user likes)
-#** I have a major problem here, which is I am not entirely sure how to save the outfit.
+#** I have a major problem here, which is I am not entirely sure how to save the outfit. the code does not work at around line 61-65. however the mechanism for adding the new outfit works.
 try: 
     if clientopinion == 'Yes':
-        newoutfitname = input('what do you want to name your new outfit?')
-        newoutfitname = open(r'saved_outfits','a')
+        newoutfit = input('which combination would you like to save? Please type either: Combination one, Combination two, or Combination three')
+        newoutfitname = input('what would you like to name your saved outfit?')
+        file = open("new_outfits.txt", "r") 
+        for line in file:
+            if newoutfit in line:
+                print('found')
+        file.close()
+        with open('saved_outfits','a') as f: 
+            f.write(f'{newoutfitname} : {newoutfit}' )
+         
         print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
 
 # this code takes the client's feedback into consideration by sending it to the Event agent so it gets added as new needs in the event file, then restarts the program. 
@@ -58,8 +75,12 @@ try:
         print('got it. I\'ll try again with that in mind.')
         Agent_3(closet,style,event)
 except:
-    print('I didn\'t quite understand your feedback. Please try again by typing one of the 2 proposed answers.')
+        print('I didn\'t quite understand your feedback. Please try again by typing one of the 2 proposed answers.')
           
+          
+
+
+
 
 
 
