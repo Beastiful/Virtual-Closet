@@ -54,34 +54,40 @@ print(final_outfits)
 clientopinion = input('Do you like the proposed outfit? respond with either: Yes or No')
 
 # i imagine there being a file for saved outfits. i think this would be useful for the style agent (to be informed of what the user likes)
-# basically, this code saves the chosen outfit to a new file named 'saved_outfits'
-try: 
-    if clientopinion == 'Yes':
-        newoutfit = input('which combination would you like to save? Please type either: One, Two, or Three')
-        newoutfitname = input('what would you like to name your saved outfit?')
-        file = open("new_outfits.txt", "r") 
-        newoutfits = file.read()
-        newoutfits = newoutfits.split('Combination')
-        for i in newoutfits:
-            if newoutfit in i:
-                chosenoutfit = i
-        file.close()
-        with open('saved_outfits','a') as f: 
-            f.write(f'{newoutfitname} : {chosenoutfit}' )
+
+if clientopinion == 'Yes':
+    accepted_answers = ['One','Two', 'Three']
+    newoutfit = input('which combination would you like to save? Please type either: One, Two, or Three')
+    if newoutfit not in accepted_answers:
+        while newoutfit not in accepted_answers:
+            newoutfit = input('Sorry, that combination does not exist. Please type either: One, Two, or Three')
+        
+    
+        
+    file = open("new_outfits.txt", "r") 
+    newoutfits = file.read()
+    newoutfits = newoutfits.split('Combination')
+    # turn this into a while loop or something #
+    for i in newoutfits:
+        if newoutfit in i:
+            chosenoutfit = i
+    # #
+    file.close()
+    newoutfitname = input('what would you like to name your saved outfit?')
+    with open('saved_outfits','a') as f: 
+        f.write(f'{newoutfitname} : {chosenoutfit}' )
          
-        print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
+    print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
 
 # this code takes the client's feedback into consideration by sending it to the Event agent so it gets added as new needs in the event file, then restarts the program. 
-    elif clientopinion == 'No':
-        reason = input('My apologies, I will try to do better next time. What was wrong with the outfit?')
-        Event_Agent(reason)
-        print('got it. I\'ll try again with that in mind.')
-        Agent_3(closet,style,event)
-except:
-        print('I didn\'t quite understand your feedback. Please try again by typing one of the 2 proposed answers.')
 
-
-
+elif clientopinion == 'No':
+    reason = input('My apologies, I will try to do better next time. What do you want in your outfit that was missing?')
+    Event_Agent(reason)
+    print('got it. I\'ll try again with that in mind.')
+    Agent_3(closet,style,event)
+else:
+    print('I didn\'t quite understand your feedback. Please try again by typing one of the 2 proposed answers.')
 
 
 
