@@ -76,9 +76,9 @@ if clientopinion == 'Yes':
 
 elif clientopinion == 'No':
     reason = input('My apologies, I will try to do better next time. What do you want in your outfit that was missing?')
-    Event_Agent(reason)
     print('got it. I\'ll try again with that in mind.')
+    Event_Agent(reason)
     Agent_3(closet,style,event)
 
 else:
-    print('I didn\'t quite understand your feedback. Please try again by typing one of the 2 proposed answers.')
+    print('Sorry, it seems like something went wrong. Please try again by typing one of the 2 proposed answers.')
