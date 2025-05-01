@@ -1,0 +1,41 @@
+from langchain.chat_models import ChatOpenAI
+
+# Initialize ChatOpenAI with your API key and desired model.
+llm = ChatOpenAI(
+    openai_api_key="...", 
+    
+    model_name="gpt-4.1",      
+    temperature=0.5                 
+)
+# This API key will be revoked soon
+# Use the invoke method to get a response.
+response = llm.invoke("Hello, who are you?").content
+print(response)
+
+
+def event_planner(text):
+    prompt = f""" You are a stylist that takes in clients to which you recommend clothing based on the situational context the client
+    gives you, the weather at the location on a precise date which you will aquire yourself, the gender of the client. For exemple, if
+    the client needs an outfit recommendation for a gala held in a garden on x date t x location, you would have take in consideration the
+    weather on x date at x location because the event is outside (Contrary to if the event was indoors). The output needs to be
+    a list of tags that describe clothes that correspond with with the client's specific request. These tag need to be part of this list : Everyday Wear, Work, Formal Event, Casual Outing, Night Out, Special Occasion, Home / Lounge, Travel, Outdoor Activities, Fitness / Workout, Beach / Pool, Date, Party, School / Campus, Errands, Formal, Semi-Formal, Business, Smart Casual, Casual, Relaxed Fit, Dressy, Trendy, Classic, Minimalist, Comfort First, Statement Piece, Layering Item, Timeless Basic, Athleisure, All Seasons, Summer, Winter, Spring, Fall, Rainy Weather, Cold Weather, Hot Weather, Windy Days, Transitional Weather, Snow-Ready, Sun-Friendly, Humidity Approved, Chilly Mornings, Comfortable, Breathable, Stretchy, Lightweight, Heavyweight, Quick-Dry, Durable.
+    There needs to be a set of tags for the outerwear (like coats, scarves, snow hat etc) and a list of tags specific to everything else.
+    In total, you should output two actual lists of tags.
+    Client reqest : {text}
+    your reply"""
+    response = llm.invoke(prompt).content
+    return(response)
+event_planner("I'm a girl going to watch a movie with my friends on april 24th 2025 at the cineplex in laval, montreal, QC, Canada")
+
+
+
+
+ef tag_giver(text):
+    prompt = f""" You are a professional stylist, associate each item of clothing in this list to these tags, items must have a minimum of 2
+    tag and can have more then one tag. They must each have on tage related to weather and one related to style. These re the tags you will be working with : Everyday Wear, Work, Formal Event, Casual Outing, Night Out, Special Occasion, Home / Lounge, Travel, Outdoor Activities, Fitness / Workout, Beach / Pool, Date, Party, School / Campus, Errands, Formal, Semi-Formal, Business, Smart Casual, Casual, Relaxed Fit, Dressy, Trendy, Classic, Minimalist, Comfort First, Statement Piece, Layering Item, Timeless Basic, Athleisure, All Seasons, Summer, Winter, Spring, Fall, Rainy Weather, Cold Weather, Hot Weather, Windy Days, Transitional Weather, Snow-Ready, Sun-Friendly, Humidity Approved, Chilly Mornings, Comfortable, Breathable, Stretchy, Lightweight, Heavyweight, Quick-Dry, Durable
+    items of clothing : {text}
+    your reply"""
+    response = llm.invoke(prompt).content
+    return(response)
+tag_giver('butterfly patch tank top y2k pastel, v-neck cropped sweater coquette pink bow, ribbed crop top white with black tie, butterfly knitted cardigan fairy grunge, grunge leather leopard crop top, wide-leg jeans y2k star denim, irregular plaid skirt fairy grunge, flare pants kawaii strawberry print, ripped jeans grunge camouflage, pleated skirt cutecore bow striped, heart frame toggle necklace gold, mixed-pearl headband j. crew, lace crew socks floral white, angel wings claw clip gold, crew socks cherry print white, heart bag mini black patent, heart bag mini pink faux leather, mini crossbody heart bag, coquette crossbody pink bow, crochet coquette mini bag, lace-up satin sneakerina balletcore, ballet flats zoe j. crew, mary jane pump steve madden, summer sandals petite-friendly neutral, grunge star boots platform, coquette top balletcore soft pink, cable knit sweater off-white, light academia blouse neutral beige, oversized flannel shirt grunge plaid, pastel cardigan soft-girl lavender, fleece-lined leggings black, pleated skirt high-waisted tweed, corduroy skirt a-line camel, wool trousers wide-leg grey, skinny jeans denim classic, knit leg warmers grey, beret hat wool beige, chunky knit scarf cream, fingerless gloves black, waist belt statement gold, mini backpack black leather, saddle bag crossbody vintage brown, tote bag with bow white, structured satchel black, velvet clutch burgundy, platform ankle boots black, over-the-knee boots suede, chunky loafers patent leather, ballet flats with ribbons pink, faux fur-lined mules cream.')
+
