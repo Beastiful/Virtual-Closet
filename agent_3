@@ -1,4 +1,4 @@
-##notes for self: a lot of try & excepts need to be added. will need to look more into file handling. will need to review how getting the 3 inputs will work. 
+##notes for self: a lot of try & excepts need to be added. will need to review how getting the 3 inputs will work. 
   
 
 # imports ChatGPT
@@ -49,22 +49,25 @@ with open("new_outfits.txt", "w") as f:
     f.write(final_outfits)
 print(final_outfits)
 
+# %%
 # the following code will save the outfit if the client liked it, or try again if the client did not.
 clientopinion = input('Do you like the proposed outfit? respond with either: Yes or No')
 
 # i imagine there being a file for saved outfits. i think this would be useful for the style agent (to be informed of what the user likes)
-#** I have a major problem here, which is I am not entirely sure how to save the outfit. the code does not work at around line 61-65. however the mechanism for adding the new outfit works.
+# basically, this code saves the chosen outfit to a new file named 'saved_outfits'
 try: 
     if clientopinion == 'Yes':
-        newoutfit = input('which combination would you like to save? Please type either: Combination one, Combination two, or Combination three')
+        newoutfit = input('which combination would you like to save? Please type either: One, Two, or Three')
         newoutfitname = input('what would you like to name your saved outfit?')
         file = open("new_outfits.txt", "r") 
-        for line in file:
-            if newoutfit in line:
-                print('found')
+        newoutfits = file.read()
+        newoutfits = newoutfits.split('Combination')
+        for i in newoutfits:
+            if newoutfit in i:
+                chosenoutfit = i
         file.close()
         with open('saved_outfits','a') as f: 
-            f.write(f'{newoutfitname} : {newoutfit}' )
+            f.write(f'{newoutfitname} : {chosenoutfit}' )
          
         print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
 
@@ -76,8 +79,6 @@ try:
         Agent_3(closet,style,event)
 except:
         print('I didn\'t quite understand your feedback. Please try again by typing one of the 2 proposed answers.')
-          
-          
 
 
 
