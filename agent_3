@@ -73,6 +73,8 @@ if clientopinion == 'Yes':
     newoutfitname = input('what would you like to name your saved outfit?')
     f = open('saved_outfits.txt','a')
     f.write(f'{newoutfitname} : {chosenoutfit}' )
+    f.close()
+ 
          
     print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
 
