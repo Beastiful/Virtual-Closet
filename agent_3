@@ -45,8 +45,9 @@ client_Fluffy_needs = [ 'summer weather' ]
 
 # this code saves the output in a file named 'new_outfits.txt' and also outputs it to the user.
 final_outfits = Agent_3(client_Fluffy_closet, client_Fluffy_style, client_Fluffy_needs)
-with open("new_outfits.txt", "w") as f:
-    f.write(final_outfits)
+f = open("new_outfits.txt", "w")
+f.write(final_outfits)
+f.close()
 print(final_outfits)
 
 # %%
@@ -65,10 +66,13 @@ if clientopinion == 'Yes':
     file = open("new_outfits.txt", "r") 
     newoutfits = file.read()
     newoutfits = newoutfits.split('Combination')
+    for i in newoutfits:
+        if newoutfit in i:
+            chosenoutfit = i
     file.close()
     newoutfitname = input('what would you like to name your saved outfit?')
-    with open('saved_outfits.txt','a') as f: 
-        f.write(f'{newoutfitname} : {chosenoutfit}' )
+    f = open('saved_outfits.txt','a')
+    f.write(f'{newoutfitname} : {chosenoutfit}' )
          
     print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
 
@@ -82,3 +86,4 @@ elif clientopinion == 'No':
 
 else:
     print('Sorry, it seems like something went wrong. Please try again by typing one of the 2 proposed answers.')
+
