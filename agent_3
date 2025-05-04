@@ -20,8 +20,7 @@ style = open(r'style.txt','r')
 event = open(r'event.txt','r')
 
 
-
-# gives the agent its role
+# gives the agent its role 
 def Agent_3(closet, style, event):
     prompt =  f"""Hello, You are an expert of compromise, creativity, comparison and comparison, and use your skills in the domain of fashion to suggest outfits
     to your client based on their situation. You have access to the closet which has been analyzed for you by Agent 1. Agent 2 will provide
@@ -30,6 +29,7 @@ def Agent_3(closet, style, event):
     to you by Agent 2 and Agent 4. As a fashion designer, you must then make combinations with them; combine tops, bottoms, and other pieces
     in a way that is logical and fashionable. Finally, you will give these combinations as suggestions to the client. Give the client at least
     3 different combinations, with the respective names of 'combination one', 'combination two', and 'combination three'. Specify to the client 'combination one' as the one which matched the requirements the most closely as "most recommended".
+    Be concise, and avoid finishing with unnecessary comments.
     closet: {closet}
     stylistic preferences: {style}
     keywords describing needs: {event}
@@ -38,7 +38,7 @@ def Agent_3(closet, style, event):
     response = llm.invoke(prompt).content
     return(response)
 
-# sample data, to be replaced
+# sample data, to be replaced or removed when compiling everything
 client_Fluffy_closet = ['white button up top', 'navy jeans', 'floral summer dress', 'grey cardigan', 'burgundy turtleneck', 'funky sports t-shirt', 'comfortable leggings', 'soft yellow hoodie', 'black blazer']
 client_Fluffy_style = [ 'colorful', 'outgoing' ]
 client_Fluffy_needs = [ 'summer weather' ]
@@ -56,36 +56,41 @@ clientopinion = input('Do you like the proposed outfit? respond with either: Yes
 
 # i imagine there being a file for saved outfits. i think this would be useful for the style agent (to be informed of what the user likes)
 # this code saves the outfit in a file named 'saved_outfits.txt' under a name the user chooses 
-
 if clientopinion == 'Yes':
-    accepted_answers = ['One','Two', 'Three']
-    newoutfit = input('which combination would you like to save? Please type either: One, Two, or Three')
-    if newoutfit not in accepted_answers:
-        while newoutfit not in accepted_answers:
-            newoutfit = input('Sorry, that combination does not exist. Please type either: One, Two, or Three')    
-    file = open("new_outfits.txt", "r") 
-    newoutfits = file.read()
-    newoutfits = newoutfits.split('Combination')
-    for i in newoutfits:
-        if newoutfit in i:
-            chosenoutfit = i
-    file.close()
-    newoutfitname = input('what would you like to name your saved outfit?')
-    f = open('saved_outfits.txt','a')
-    f.write(f'{newoutfitname} : {chosenoutfit}' )
-    f.close()
- 
-         
-    print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
+    while clientopinion == 'Yes':
+        accepted_answers = ['One','Two', 'Three']
+        newoutfit = input('which combination would you like to save? Please type either: One, Two, or Three')
+# error handling if user does not type One, Two, or Three
+        if newoutfit not in accepted_answers:
+            while newoutfit not in accepted_answers:
+                newoutfit = input('Sorry, that combination does not exist. Please type either: One, Two, or Three')    
+        file = open("new_outfits.txt", "r") 
+        newoutfits = file.read()
+        newoutfits = newoutfits.split('Combination')
+        for i in newoutfits:
+            if newoutfit in i:
+                chosenoutfit = i
+        file.close()
+        newoutfitname = input('what would you like to name your saved outfit?')
+        f = open('saved_outfits.txt','a')
+        f.write(f'{newoutfitname} : {chosenoutfit}' )
+        f.close()    
+        print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
+# this code allows the user the option so save an additional outfit
+        clientopinion = input('Would you like to save another outfit? Please respond with either : Yes or No')
+    if clientopinion == 'No':
+        print('Okay, have a wonderful day you fashion icon. See you next time!')
 
 # this code takes the client's feedback into consideration by sending it to the Event agent so it gets added as new needs in the event file, then restarts the program. 
-
 elif clientopinion == 'No':
-    reason = input('My apologies, I will try to do better next time. What do you want in your outfit that was missing?')
-    print('got it. I\'ll try again with that in mind.')
-    Event_Agent(reason) # replace this with the Event agent's actual name 
-    Agent_3(closet,style,event)
+        reason = input('My apologies, I will try to do better next time. What do you want in your outfit that was missing?')
+        print('Got it. I\'ll try again with that in mind.')
+        Event_Agent(reason) # replace this with the Event agent's actual name 
+        Agent_3(closet,style,event)
 
-else:
+# error handling if the user does not type yes or no
+else: 
     print('Sorry, it seems like something went wrong. Please try again by typing one of the 2 proposed answers.')
+
+
 
