@@ -1,0 +1,24 @@
+infile = open(r'compiled_closet.txt', 'r')
+file_contents = infile.read()
+infile.close()
+
+def tag_giver(file_contents):
+    prompt = f""" You are a professional stylist, associate each item of clothing in this list to these tags, items must have a minimum
+    of 2 tag and can have more then one tag. They must each have on tage related to weather and one related to style. These re the tags
+    you will be working with : Everyday Wear, Work, Formal Event, Casual Outing, Night Out, Special Occasion, Home / Lounge, Travel,
+    Outdoor Activities, Fitness / Workout, Beach / Pool, Date, Party, School / Campus, Errands, Formal, Semi-Formal, Business, Smart 
+    Casual, Casual, Relaxed Fit, Dressy, Trendy, Classic, Minimalist, Comfort First, Statement Piece, Layering Item, Timeless Basic, 
+    Athleisure, All Seasons, Summer, Winter, Spring, Fall, Rainy Weather, Cold Weather, Hot Weather, Windy Days, Transitional Weather, 
+    Snow-Ready, Sun-Friendly, Humidity Approved, Chilly Mornings, Comfortable, Breathable, Stretchy, Lightweight, Heavyweight, 
+    Quick-Dry, Durable. You must also assign one of the following tags to each item :Top, Bottom, Dress, One-Piece, Outerwear, Footwear, Accessorie,
+    for exemple : [[butterfly patch tank top y2k pastel,Top, Casual Outing, Everyday Wear, Summer, Hot Weather, Trendy, Breathable, Lightweight,
+    Statement Piece, Sun-Friendly],[neck cropped sweater coquette pink bow,Top, Casual Outing, Date, Spring, Fall, Layering Item, Trendy,
+    Comfortable, Cozy, Statement Piece, Chilly Mornings], ...]
+    with no '\n' anywhere. Put eveything, both tags and items in quotation marks like this '...'
+    items of clothing : {file_contents} 
+    your reply : {['item','tags', 'tags', ...],['item','tags', 'tags', ...]} [['item','tags', 'tags', ...],['item', 'tags', 'tags, ...], ... ]
+"""
+    response = llm.invoke(prompt).content
+
+    return(response)
+tag_giver(file_contents)
