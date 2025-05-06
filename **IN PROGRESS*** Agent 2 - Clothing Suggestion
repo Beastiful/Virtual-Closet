@@ -1,36 +1,61 @@
 import openai
 
-# Read the contents of the file
+infile2 = open(r'fashion_styles.txt','r')
+file_contents2 = infile2.read()
+infile2.close()
 infile = open(r'compiled_closet.txt', 'r')
 file_contents = infile.read()
 infile.close()
 
+chatbot_prompt = ("You are an eccentric stylist-assistant named Chatbot. You love being creative" 
+    "and referring to online sources to give insightful style advice."
+    "you will read through all the given keywords and format them (jump to the next line if the word is cut): [Acubi, Afro-punk, Afro-retro, All-American, Alpine, Alt Fashion, Antique, Aristocrat, Art Deco, Art Nouveau, Athleisure, Avant-garde, Aztec, Baddie, Balletcore, Barbiecore, Beach Bum, Beatnik, Biker, Black Loli, Bohemian/Boho, Bollywood, Bon chic, bon genre, Bubble Goth, Business Casual, California, Casual, Chic, Classic, Coastal Cowgirl, Coastal Grandmother, Coquette, Cosplay, Cottagecore, Country, Country Club, Cowboy/Western, Creepy Cute, Dark Academia, Dasakawa, Decora, Dieselpunk, Eclectic, Edgy, E-Girl/Boy, Emo, English, Ero-Kawaii, Equestrian, Formal, Furry, Futuristic, Gamine, Gangster, Geek chic, Glam Rock, Glamour, Goth, Gothic Lolita, Gorpcore, Grunge, Gyaru, Hadeko, Hairband, Harajuku, Heavy Metal, Hip-hop, Hippie, Hipster, House, Ivy League, Kampala Blend, Kawaii, Kodona/Ouji/Boystyle, Kowa-Kawaii, Ladylike, Light Academia, Lolita, Lunarpunk, Macabre, Mad Max, Metalhead, Military, Minimal/Minimalist, Mod, Mori Girl, Nautical, Neo Goth, Neo-Edwardian, Neo-Y2K, New Romanticism, Normcore, NuGoth, Nymphet, Old Money, Peasant, Pinup, Phat, Pop, Pop Punk, Posh, Post-apocalyptic road warrior, Power Dressing, Prairie, Preppy/Collegiate, Psychedelic, Psychobilly, Punk, Rasta, Rave/Raver, Resort, Retro, Rock, Rockabilly, Romantic, Rustic, Safari, Sapeurs, Scandinavian Minimalist, Scene, Scrumbro, Seapunk, Ska, Skate/Skater, Skandi, Sloane Ranger, Soft Girl, Softboys, Solarpunk, Southwestern, Sporty, Steampunk, Street, Surf, Techno, Techwear, Tiki Goth, Tomboy, Traditional Ethnic Styles, Trendy, Tropical, Ulzzang, Urban, Utility, Vaporwave, Varsity, Vintage/Retro, Visual Kei, VSCO Girl/Boy, Weirdcore, Y2K, Zoot Suiters,] and ask for the client's fashion style."
+    "the client can name any and more than one of following aesthetics from the keywords and, you will have to look on the internet to generate a short description of each of the named styles."
+    "the short description should look like the following example: --> Athleisure: Combines athletic wear with casual pieces for a sporty yet comfortable look—think leggings, sports bras, sneakers, and hoodies."
+    "You must only name and analyze aesthetics and styles explicitly listed as the keywords above when the user names them. Do not create or assume any fastion styles/aesthetic that isn’t in the keywords. Suggest a similar aesthetic in the keywords if the aesthetic the user names is not in the keywords."
+    "Ask the user if the description and The styles match their aesthetic."
+                     )
+chatbot_prompt2 = (  "You must only use clothing items explicitly listed in compiled_closet.txt when suggesting outfits. Do not create or assume any clothing that isn’t in the file."
+    "Then, you will suggest 5 different outfits with the compiled_closet.txt file by having at least 1 piece of clothing in the following categories: top, bottom, accessory, layering, socks & shoes. You will also make a quick summary of the fashion style/aesthetic that the user names"
+    "At the end of your text, ask if the client if satisfied with your request, by asking: are you satisfied with your new outfits? If the client sounds happy (by replying, yes, I'm satisfied, and other positive responses), ask the client if they would like to stock the outfit recommendation in a .txt file, seperating each outfit by <<//>>. If they would like to save the outfit, create that .txt file in a folder called <<outfits>>"
+    "If the client sounds unsatisfied and disappointed(by replying, no, I'm disappointed, and other negative responses) by your outfit reccommendations, don't panic, and ask them which outfit(s) the client would like to generate again. You will provide the following choices, <<#1>>, <<#2>>, <<#3>>, <<#4>>, <<#5>>, <<all>>."
+    "If the user writes <<#1>>, generate outfit <<#1>> again."
+    "If the user writes <<#2>>, generate outfit <<#2>> again."
+    "If the user writes <<#3>>, generate outfit <<#3>> again."
+    "If the user writes <<#4>>, generate outfit <<#4>> again."
+    "If the user writes <<#5>>, generate outfit <<#5>> again."
+    "If the user writes <<all>>, generate all the outfits again.")
+
 client = openai.OpenAI(
-    api_key="INSERT API KEY"
-)
+    api_key="hahaaahahaha insert key plz"
 
-# System prompt sets up the stylist persona
-SYSTEM_PROMPT = (
-    "You are an eccentric stylist-assistant named Chatbot. You love being creative "
-    "and referring to online sources to give insightful style advice. Given a .txt file, "
-    "you will read through all the given keywords and name a style corresponding to the theme of the clothes. "
-    "Then, you will suggest 5 different outfits with the .txt file set of clothing by having at least 1 piece of clothing in the following categories: top, bottom, accessory, layer, socks & shoes."
-)
-
-def chat_with_gpt(prompt):
+def STYLE_PROP():
+    chatbot_prompt
+        
+def style_first(prompt):
     response = client.chat.completions.create(
         model="gpt-4.1",
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": chatbot_prompt},
             {"role": "user", "content": prompt}
         ]
     )
     return response.choices[0].message.content.strip()
 
+def style_second(prompt):
+    response = client.chat.completions.create(
+        model="gpt-4.1",
+        messages=[
+            {"role": "system", "content": chatbot_prompt2},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message.content.strip()
+    
 # Automatically send the file contents as the initial prompt
-initial_prompt = f"Here is the list of clothes from the file:\n\n{file_contents}\n\nWhat style do you think this closet reflects, and can you suggest 5 outfits?"
+prompt = "Hello I want to know more about my fashion style! I have many clothes I'd like to know more how to style."
 
-print("Chatbot: ", chat_with_gpt(initial_prompt))
+print("Chatbot: ", style_first(prompt))
 
 # Then allow further conversation
 while True:
@@ -38,5 +63,14 @@ while True:
     if user_input.lower() in ["quit", "exit", "bye"]:
         print("Chatbot: Goodbye! Have a great day 😊")
         break
-    response = chat_with_gpt(user_input)
+#NEEDS TO BE FOR THE STYLE_FRIST PART
+    if user_input.lower() == "yes":
+        style_second(prompt)
+        #PROCEED WITH THE SAMPLE_FOR_LATER 
+    elif user_input.lower() == "no":
+        print("Let's try again!")
+        STYLE_PROP(file_contents2)
+    else:
+        print("Please input yes or no")
+    response = style_first(user_input)
     print("Chatbot: ", response)
