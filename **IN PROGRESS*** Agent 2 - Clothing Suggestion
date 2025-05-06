@@ -61,7 +61,7 @@ print("Chatbot: ", style_first(prompt))
 while True:
     user_input = input("You: ")
     if user_input.lower() in ["quit", "exit", "bye"]:
-        print("Chatbot: Goodbye! Have a great day 😊")
+        print("Chatbot: Goodbye! See you later!")
         break
 #NEEDS TO BE FOR THE STYLE_FRIST PART
     if user_input.lower() == "yes":
