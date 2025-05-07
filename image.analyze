@@ -1,0 +1,99 @@
+import base64
+import openai
+# don't forget to pu the api key
+openai.api_key = ""
+# put the text image in this
+virtualCloset = [
+
+]
+
+binaryFileNameLst = []
+analyzedClotheLst = []
+
+def image_encoded():
+    fileCount = 0
+    
+    for imgPath in virtualCloset:
+        fileCount += 1
+
+        with open(imgPath, "rb") as img_file:
+            encoded_string = base64.b64encode(img_file.read()).decode("utf-8")
+
+        binaryFileName = f"clothe {fileCount}.b64.txt"
+        binaryFileNameLst.append(binaryFileName)
+
+        with open(binaryFileName, "w", encoding="utf-8") as output_file:
+            output_file.write(encoded_string)
+            print(f"Image {fileCount} is added to virtual closet file")
+
+    print("Images successfully saved to your virtual closet.")
+
+def ai_ageant_cloth_analyse():
+    index = 0
+    for binaryPath in binaryFileNameLst:
+        index += 1
+        with open(binaryPath, "r", encoding="utf-8") as analyse_file:
+            content = analyse_file.read()
+
+        print(f"\n analyzing image {index} from {binaryPath}...\n")
+
+        response = openai.chat.completions.create(
+            model="gpt-4.1",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": """
+                                You are a fashion expert. Analyze EACH clothing piece and accessory in the image using the following criteria:
+                                            
+                                - use ONE tag to identifies item using fallowing categories: Everyday Wear, Work, Formal Event, Casual Outing, Night Out, Special Occasion, Home / Lounge, Travel,
+                                                        Outdoor Activities, Fitness / Workout, Beach / Pool, Date, Party, School / Campus, Errands, Formal, Semi-Formal, Business, Smart 
+                                                        Casual, Casual, Relaxed Fit, Dressy, Trendy, Classic, Minimalist, Comfort First, Statement Piece, Layering Item, Timeless Basic, 
+                                                        Athleisure, All Seasons, Summer, Winter, Spring, Fall, Rainy Weather, Cold Weather, Hot Weather, Windy Days, Transitional Weather, 
+                                                        Snow-Ready, Sun-Friendly, Humidity Approved, Chilly Mornings, Comfortable, Breathable, Stretchy, Lightweight, Heavyweight, 
+                                                        Quick-Dry, Durable.
+                                - Assign the item to one of those types: Top, Bottom, Dress, One-Piece, Outerwear, Footwear, Accessorie
+                                - Identify the one main color
+
+                                Format your reply like:
+                                [item description, color, tag, type] 
+                                no need to numerote it 
+                                and don't do greeting just the data
+                                """
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{content}"
+                            }
+                        }
+                    ]
+                }
+            ],
+        )
+
+        result = response.choices[0].message.content
+
+        analyzedClotheName = f"analyzed clothe{index}.txt"
+        analyzedClotheLst.append(analyzedClotheName)
+        with open(analyzedClotheName,"w") as virtualCloset:
+            virtualCloset.write(result)
+
+def clothe_data_management():  
+    virtualCloset = {}  
+    for analyzedcloth in analyzedClotheLst:
+        with open(analyzedcloth, "r" ) as infile: 
+            analyzedClothesLines = infile.readlines()
+            for line in analyzedClothesLines:
+                pieceClothinglst = line.strip(" "+"\n").split(",")
+                pieceName = pieceClothinglst[0]
+                criterionlst = pieceClothinglst[1:]
+                virtualCloset.update({pieceName: criterionlst})
+    with open("vituralClosetDic.txt","w") as virtualclosetdict:
+        virtualclosetdict.write(str(virtualCloset).strip("'"))
+                    
+image_encoded()                
+ai_ageant_cloth_analyse()
+clothe_data_management()
