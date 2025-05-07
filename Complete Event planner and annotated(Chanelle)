@@ -12,10 +12,14 @@ llm = ChatOpenAI(
 response = llm.invoke("Hello, who are you?").content
 print(response)
 
+# This function uses the dictionary with all the clothes described by tags
+# that is output by Leijie's code and finds the ones that are suitable for
+# the given situation. It only outputs the names of the suitable clothing,
+# which are the keys in the dictionary
 
-text = input('Describe your event.')
+text = input('Describe your event.') # This is the input where the user describes their event
 def event_planner():
-    dictionary = clothe_data_management()
+    dictionary = clothe_data_management() # This is the dictionary created by Leijie's code
     prompt = f""" You are a stylist who takes in clients to whom you recommend clothing based
     on the situational context the client gives you, the weather at the location on a precise date
     which you will aquire yourself. For exemple, if the client needs an
@@ -38,17 +42,13 @@ def event_planner():
 event_planner()
 
 
-
+# This function saves the output of clothing items from event_planner in a file
 
 def file_maker():
     clothing = f'{event_planner()}'
-    clothing.strip('[]',)
-    clothing = str(clothing)
-    clothing2 = clothing.replace('[]',' ')
     chanelle = open('EventF.txt', 'w')
     chanelle.write(f'{clothing2}\n')
-    print(f'{clothing2}')
+    print(f'{clothing}')
     chanelle.close()
 
 file_maker()
-
