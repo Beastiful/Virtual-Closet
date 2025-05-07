@@ -15,20 +15,20 @@ print(response)
 
 text = input('Describe your event.')
 def event_planner():
-    dictionary = dictionnary_maker()
+    dictionary = clothe_data_management()
     prompt = f""" You are a stylist who takes in clients to whom you recommend clothing based
     on the situational context the client gives you, the weather at the location on a precise date
     which you will aquire yourself. For exemple, if the client needs an
-    outfit recommendation for a gala held in a garden on x date, x location, you would have to take 
+    outfit recommendation for a gala held in a garden on x date x location, you would have to take 
     into consideration the weather on x date at x location because the event is outside (Contrarily 
-    to see if the event was indoors). You will be picking out clothes from a dictionary that contains
+    to see if the event was indoors). You will be picking out clothes from dictionary that contains
     pieces of clothing and accessories as keys and a list of tags that describe the clothing as values.
     The first tag of each list of tags will always be one of these: Top, Bottom, Dress, One-Piece, 
     Outerwear, Footwear, Accessories. The output you give must always have at least one item 
     that matches one of these tags. The rest of the tags in the list describe the style of the item
     as well as the weather, it can be worn in; use these to see which items correspond with your given
     situation. You will have to output the keys of all the items in this dictionary. Your output will only
-    be a list of all the keys in this dictionary that match the client's request and situation, no
+    be all the keys in this dictionary that match the client's request and situation, separated by \n, no
     extra text
     The dictionary: {dictionary}
     Client request: {text}
@@ -36,3 +36,19 @@ def event_planner():
     response = llm.invoke(prompt).content
     return(response)
 event_planner()
+
+
+
+
+def file_maker():
+    clothing = f'{event_planner()}'
+    clothing.strip('[]',)
+    clothing = str(clothing)
+    clothing2 = clothing.replace('[]',' ')
+    chanelle = open('EventF.txt', 'w')
+    chanelle.write(f'{clothing2}\n')
+    print(f'{clothing2}')
+    chanelle.close()
+
+file_maker()
+
