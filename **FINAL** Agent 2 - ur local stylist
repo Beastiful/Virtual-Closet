@@ -1,99 +1,99 @@
-import openai
-client = openai.OpenAI(
-    api_key="[insert me]"
+from langchain.chat_models import ChatOpenAI
+
+infile = open(r'compiled_closet.txt', 'r')
+file_contents = infile.read()
+infile.close()
+
+llm = ChatOpenAI(
+    openai_api_key= "[insert key]",
+    model_name="gpt-4.1",      
+    temperature=0.4                 
 )
 
-#prompt allows for fashion style identification and advice
-chatbot_prompt = ("You are an eccentric stylist-assistant named Chatbot. You love being creative" 
-    "and referring to online sources to give insightful style advice."
-    "you will read through all the given keywords and format them:[Acubi, Afro-punk, Afro-retro, All-American, Alpine, Alt Fashion, Antique, Aristocrat, Art Deco, Art Nouveau, Athleisure, Avant-garde, Aztec, Baddie, Balletcore, Barbiecore, Beach Bum, Beatnik, Biker, Black Loli, Bohemian/Boho, Bollywood, Bon chic, bon genre, Bubble Goth, Business Casual, California, Casual, Chic, Classic, Coastal Cowgirl, Coastal Grandmother, Coquette, Cosplay, Cottagecore, Country, Country Club, Cowboy/Western, Creepy Cute, Dark Academia, Dasakawa, Decora, Dieselpunk, Eclectic, Edgy, E-Girl/Boy, Emo, English, Ero-Kawaii, Equestrian, Formal, Furry, Futuristic, Gamine, Gangster, Geek chic, Glam Rock, Glamour, Goth, Gothic Lolita, Gorpcore, Grunge, Gyaru, Hadeko, Hairband, Harajuku, Heavy Metal, Hip-hop, Hippie, Hipster, House, Ivy League, Kampala Blend, Kawaii, Kodona/Ouji/Boystyle, Kowa-Kawaii, Ladylike, Light Academia, Lolita, Lunarpunk, Macabre, Mad Max, Metalhead, Military, Minimal/Minimalist, Mod, Mori Girl, Nautical, Neo Goth, Neo-Edwardian, Neo-Y2K, New Romanticism, Normcore, NuGoth, Nymphet, Old Money, Peasant, Pinup, Phat, Pop, Pop Punk, Posh, Post-apocalyptic road warrior, Power Dressing, Prairie, Preppy/Collegiate, Psychedelic, Psychobilly, Punk, Rasta, Rave/Raver, Resort, Retro, Rock, Rockabilly, Romantic, Rustic, Safari, Sapeurs, Scandinavian Minimalist, Scene, Scrumbro, Seapunk, Ska, Skate/Skater, Skandi, Sloane Ranger, Soft Girl, Softboys, Solarpunk, Southwestern, Sporty, Steampunk, Street, Surf, Techno, Techwear, Tiki Goth, Tomboy, Traditional Ethnic Styles, Trendy, Tropical, Ulzzang, Urban, Utility, Vaporwave, Varsity, Vintage/Retro, Visual Kei, VSCO Girl/Boy, Weirdcore, Y2K, Zoot Suiters,] and ask for the client's fashion style. Do NOT share/display this list with the user"
-    "the client can name any, but only ONE (at a time) of following aesthetics from the keywords and, you will have to look on the internet to generate a short description of each of the named styles. Do NOT accept multiple words (user: weirdcore, goth; your answer should be, please name 1 aesthetic at a time and ask for the aesthetic again)"
-    "Each time the user names a keyword and replies with yes, they can continue naming aesthetics as they see fit."
-    "the short description should look like the following example: --> athleisure: combines athletic wear with casual pieces for a sporty yet comfortable look—think leggings, sports bras, sneakers, and hoodies."
-    "You must only name and analyze aesthetics and styles explicitly listed as the keywords above when the user names them. Do not create or assume any fastion styles/aesthetic that isn’t in the keywords. Suggest a similar aesthetic in the keywords if the aesthetic the user names is not in the keywords, and ask: Out of all the aesthetics listed in the list, name 1 that matches with your preferences."
-    "In a NEW string, Ask the user if the description and The styles matches their aesthetic by saying: Does this aesthetic match with your preferences?(ONLY THIS QUESTION)"
-    "If the user has no idea what their aesthetic is or if the user replies no to: Does this aesthetic match with your preferences?, then ask them what they like to wear by asking: What do you wear on a daily basis? (ONLY THIS QUESTION) and match the user's description with your descriptions of any given aesthetic (like: comfortable joggers, and loose zipped up sweaters, running shoes --> athleisure)."
-    "When the user names what they usually wear, describe the aesthetic you think is associated with the user's."
-    "DO NOT ask: Does this aesthetic match with your preferences? and ask: Out of all the aesthetics listed in the list, name 1 that matches with your preferences."
-                     )
-chatbot_prompt2 = f""" O Great Stylist! You are now in charge of filtering the user's closet based on their aesthetic(s) named in "selected_styles".
+lst_aesthetics = [
+"acubi", "afro-punk", "afro-retro", "all-american", "alpine", "alt fashion", "antique", "aristocrat", "art deco", "art nouveau", 
+"athleisure", "avant-garde", "aztec", "baddie", "balletcore", "barbiecore", "beach bum", "beatnik", "biker", "black loli", 
+"bohemian/boho", "bollywood", "bon chic, bon genre", "bubble goth", "business casual", "california", "casual", "chic", "classic", 
+"coastal cowgirl", "coastal grandmother", "coquette", "cosplay", "cottagecore", "country", "country club", "cowboy/western", 
+"creepy cute", "dark academia", "dasakawa", "decora", "dieselpunk", "eclectic", "edgy", "e-girl/boy", "emo", "english", 
+"ero-kawaii", "equestrian", "formal", "furry", "futuristic", "gamine", "gangster", "geek chic", "glam rock", "glamour", "goth", 
+"gothic lolita", "gorpcore", "grunge", "gyaru", "hadeko", "hairband", "harajuku", "heavy metal", "hip-hop", "hippie", "hipster", 
+"house", "ivy league", "kampala blend", "kawaii", "kodona/ouji/boystyle", "kowa-kawaii", "ladylike", "light academia", "lolita", 
+"lunarpunk", "macabre", "mad max", "metalhead", "military", "minimal/minimalist", "mod", "mori girl", "nautical", "neo goth", 
+"neo-edwardian", "neo-y2k", "new romanticism", "normcore", "nugoth", "nymphet", "old money", "peasant", "pinup", "phat", "pop", 
+"pop punk", "posh", "post-apocalyptic road warrior", "power dressing", "prairie", "preppy/collegiate", "psychedelic", 
+"psychobilly", "punk", "rasta", "rave/raver", "resort", "retro", "rock", "rockabilly", "romantic", "rustic", "safari", "sapeurs", 
+"scandinavian minimalist", "scene", "scrumbro", "seapunk", "ska", "skate/skater", "skandi", "sloane ranger", "soft girl", 
+"softboys", "solarpunk", "southwestern", "sporty", "steampunk", "street", "surf", "techno", "techwear", "tiki goth", "tomboy", 
+"traditional ethnic styles", "trendy", "tropical", "ulzzang", "urban", "utility", "vaporwave", "varsity", "vintage/retro", 
+"visual kei", "vsco girl/boy", "weirdcore", "y2k", "zoot suiters"
+]
+    
+def style_first(user_input):
+        chatbot_prompt = f"""You are an eccentric stylist-assistant named Chatbot. You love being creative and referring to online sources to give insightful style advice.
+you will read through all the given keywords and format them {lst_aesthetics} and ask for the client's fashion style. Do NOT share/display this list with the user. The client can name any,
+but only ONE (at a time) of following aesthetics from the keywords and, you will have to look on the internet to generate a short description of each of the named styles.
+Do NOT accept multiple words (user: weirdcore, goth; your answer should be, please name 1 aesthetic at a time and ask for the aesthetic again) Each time the user names a keyword and replies with yes,
+they can continue naming aesthetics as they see fit. the short description should look like the following example: --> athleisure: combines athletic wear with casual pieces for a sporty yet comfortable look—think leggings, sports bras, sneakers, and hoodies.
+You must only name and analyze aesthetics and styles explicitly listed as the keywords above when the user names them. Do not create or assume any fastion styles/aesthetic that isn’t in the keywords.
+Suggest a similar aesthetic in the keywords if the aesthetic the user names is not in the keywords, and ask: Out of all the aesthetics listed in the list, name 1 that matches with your preferences.
+In a NEW string, Ask the user if the description and The styles matches their aesthetic by saying: Does this aesthetic match with your preferences?(ONLY THIS QUESTION)
+If the user has no idea what their aesthetic is or if the user replies no to: Does this aesthetic match with your preferences?,
+then ask them what they like to wear by asking: What do you wear on a daily basis? (ONLY THIS QUESTION)
+and match the user's description with your descriptions of any given aesthetic (like: comfortable joggers, and loose zipped up sweaters, running shoes --> athleisure).
+When the user names what they usually wear, describe the aesthetic you think is associated with the user's. DO NOT ask: Does this aesthetic match with your preferences?
+and ask: Out of all the aesthetics listed in the list, name 1 that matches with your preferences."""
+        prompt = f"""Analyze this style: {user_input} following your parameters: {chatbot_prompt}"""
+        return llm.invoke(prompt).content
+
+def style_reccommender(file_contents, selected_styles):
+    chatbot_prompt2 = f""" O Great Stylist! You are now in charge of filtering the user's closet based on their aesthetic(s) named in "selected_styles".
     You will have to read through all the different pieces found in "file_contents" and filter out pieces that do not match with the user's aesthetic and keep the ones that do.
     For example, if the user has the "decora" style in their "selected_styles, keep colorful items like a peachy orange cardigan, but filter out bland and monotone items like black baumwolle pants. Look online to get inspiration for the the pieces of clothing matching with "selected_styles" list
     Do NOT invent words that are not from either "file_contents" or "selected_styles".
     items of clothing: {file_contents}
     list of aesthetics or fashion styles to respect: {selected_styles}
     Your reply should be (the pieces of clothings that MATCH with the user's aesthetic are appended to the stylized_closet list) : stylized_closet = ["item1","item2","item3",...]"""
-
-def style_first(prompt):
-    response = client.chat.completions.create(
-        model="gpt-4.1",
-        temperature= 0.3,
-        messages=[
-            {"role": "system", "content": chatbot_prompt},
-            {"role": "user", "content": user_input}
-        ]
-    )
-    return response.choices[0].message.content.strip()
-
-def style_reccommender(file_contents, selected_styles):
-    #compares the file_contents and the selected_styles to filter out words that do not match with the user's aesthetic
-    response = client.chat.completions.create(
-        model="gpt-4.1",
-        temperature= 0.7,
-        messages=[
-            {"role": "system", "content": chatbot_prompt2}
-        ]
-    )
-    return response.choices[0].message.content.strip()
-    
-print("Chatbot: ", style_first(prompt))
-
-lst_aesthetics = [
-    "Acubi", "Afro-punk", "Afro-retro", "All-American", "Alpine", "Alt Fashion", "Antique", "Aristocrat", "Art Deco", "Art Nouveau", 
-    "Athleisure", "Avant-garde", "Aztec", "Baddie", "Balletcore", "Barbiecore", "Beach Bum", "Beatnik", "Biker", "Black Loli", 
-    "Bohemian/Boho", "Bollywood", "Bon chic, bon genre", "Bubble Goth", "Business Casual", "California", "Casual", "Chic", "Classic", 
-    "Coastal Cowgirl", "Coastal Grandmother", "Coquette", "Cosplay", "Cottagecore", "Country", "Country Club", "Cowboy/Western", 
-    "Creepy Cute", "Dark Academia", "Dasakawa", "Decora", "Dieselpunk", "Eclectic", "Edgy", "E-Girl/Boy", "Emo", "English", 
-    "Ero-Kawaii", "Equestrian", "Formal", "Furry", "Futuristic", "Gamine", "Gangster", "Geek chic", "Glam Rock", "Glamour", "Goth", 
-    "Gothic Lolita", "Gorpcore", "Grunge", "Gyaru", "Hadeko", "Hairband", "Harajuku", "Heavy Metal", "Hip-hop", "Hippie", "Hipster", 
-    "House", "Ivy League", "Kampala Blend", "Kawaii", "Kodona/Ouji/Boystyle", "Kowa-Kawaii", "Ladylike", "Light Academia", "Lolita", 
-    "Lunarpunk", "Macabre", "Mad Max", "Metalhead", "Military", "Minimal/Minimalist", "Mod", "Mori Girl", "Nautical", "Neo Goth", 
-    "Neo-Edwardian", "Neo-Y2K", "New Romanticism", "Normcore", "NuGoth", "Nymphet", "Old Money", "Peasant", "Pinup", "Phat", "Pop", 
-    "Pop Punk", "Posh", "Post-apocalyptic road warrior", "Power Dressing", "Prairie", "Preppy/Collegiate", "Psychedelic", 
-    "Psychobilly", "Punk", "Rasta", "Rave/Raver", "Resort", "Retro", "Rock", "Rockabilly", "Romantic", "Rustic", "Safari", "Sapeurs", 
-    "Scandinavian Minimalist", "Scene", "Scrumbro", "Seapunk", "Ska", "Skate/Skater", "Skandi", "Sloane Ranger", "Soft Girl", 
-    "Softboys", "Solarpunk", "Southwestern", "Sporty", "Steampunk", "Street", "Surf", "Techno", "Techwear", "Tiki Goth", "Tomboy", 
-    "Traditional Ethnic Styles", "Trendy", "Tropical", "Ulzzang", "Urban", "Utility", "Vaporwave", "Varsity", "Vintage/Retro", 
-    "Visual Kei", "VSCO Girl/Boy", "Weirdcore", "Y2K", "Zoot Suiters"
-]
+    response = llm.invoke(chatbot_prompt2).content
+    return response
 
 #For stocking the preferences of the user
 selected_styles = []
 last_style = None
 
+new_aesthetics = [x.strip().lower() for x in lst_aesthetics]
+
+print("Hello, since you're here seeking for my help, pick a word from the following list:")
 print(lst_aesthetics)
 
 while True:
     user_input = input("You: ")
 
     if user_input.lower() == "proceed":
-        #since we can't print a fct to get our wanted results, but we can't use return: 
+#since we can't print a fct to get our wanted results, but we can't use return: 
         filtered = style_reccommender(file_contents, selected_styles)
 #This is a list, for Angeline's code
         print(filtered)
         break
-        
-#These following checks are to make sure can't break the code too easily
+
+#These following checks are to make sure can't break
     if user_input.lower() == "yes" and response.endswith("Does this aesthetic match with your preferences?"):
         if last_style:
-            selected_styles.append(last_style)
-            print(f"Chatbot: Added “{last_style}” to your chosen styles:", selected_styles)
-            print(f"""Chatbot: You can always type "proceed" to filter out your closet if you are satisfied with your style selection!""")
-#The following one is to make sure people can't write yes again and append their aesthetic twice
-            response = "Great Choice!"
-#Remember, continue runs the code from while True
+            if last_style in selected_styles:
+                print("Chatbot: You've already added this aesthetic.")
+            else:
+                selected_styles.append(last_style)
+                print(f"Chatbot: Added “{last_style}” to your chosen styles:", selected_styles)
+                print(f"""Chatbot: You can always type "proceed" to filter out your closet if you are satisfied with your style selection!""")
+            last_style = None
+#Remember, continue runs the code from while Trueyes
             continue
 #Makes it so we can stock the named style with the previous if-statement
+    if user_input.lower() not in new_aesthetics:
+        print(f"""Chatbot: Sorry, {user_input} isn't a recognized style. List another aesthetic above""")
+#following helps to not accidentally add an aesthetic you said "no" to
+        response = "Chatbot: Good Choice"
+        continue
     last_style = user_input
     response = style_first(user_input)
     print("Chatbot: ", response)
