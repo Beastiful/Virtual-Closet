@@ -1,3 +1,4 @@
+#INPUT .txt, OUTPUT list
 from langchain.chat_models import ChatOpenAI
 
 infile = open(r'compiled_closet.txt', 'r')
