@@ -13,15 +13,14 @@ Prompt to assign tags in form of a list where the first index (index 0) is alway
 
 def tag_giver(text):
     prompt = f""" You are a professional stylist, associate each item of clothing in this list to these tags, items must have a minimum
-    of 2 tag and can have more then one tag. They must each have on tage related to weather and one related to style. These re the tags
+    of 2 style tags (example: formal) and 2 weather tags (example: rainy weather) . These are the tags
     you will be working with : Everyday Wear, Work, Formal Event, Casual Outing, Night Out, Special Occasion, Home / Lounge, Travel,
     Outdoor Activities, Fitness / Workout, Beach / Pool, Date, Party, School / Campus, Errands, Formal, Semi-Formal, Business, Smart 
     Casual, Casual, Relaxed Fit, Dressy, Trendy, Classic, Minimalist, Comfort First, Statement Piece, Layering Item, Timeless Basic, 
     Athleisure, All Seasons, Summer, Winter, Spring, Fall, Rainy Weather, Cold Weather, Hot Weather, Windy Days, Transitional Weather, 
     Snow-Ready, Sun-Friendly, Humidity Approved, Chilly Mornings, Comfortable, Breathable, Stretchy, Lightweight, Heavyweight, 
-    Quick-Dry, Durable. You must also assign one of the following tags to each item :Top, Bottom, Dress, One-Piece, Outerwear, Footwear, Accessorie,
-    for exemple : [[butterfly patch tank top y2k pastel,Top, Casual Outing, Everyday Wear, Summer, Hot Weather, Trendy, Breathable, Lightweight,
-    Statement Piece, Sun-Friendly],[neck cropped sweater coquette pink bow,Top, Casual Outing, Date, Spring, Fall, Layering Item, Trendy,
+    Quick-Dry, Durable. You must also assign only one of the following tags to each item :Top, Bottom, Dress, One-Piece, Outerwear, Footwear, Accessory,
+    for exemple : 'butterfly patch tank top y2k pastel,Top, Casual Outing, Everyday Wear, Summer, Hot Weather],[neck cropped sweater coquette pink bow,Top, Casual Outing, Date, Spring, Fall, Layering Item, Trendy,
     Comfortable, Cozy, Statement Piece, Chilly Mornings], ...]
     with no '\n' anywhere
     items of clothing : {text}
