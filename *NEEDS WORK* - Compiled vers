@@ -1,0 +1,175 @@
+'''
+
+Agent 1 (Leijie) is responsible for analyzing each image inputed by the user into strings to be stored in a txt file
+called "compiled_closet". The AI will sort the items by **tops, bottoms, shoes and accessories** as well as style
+and weather compatibility.
+
+Agent 2 (Elisa) will take as input certain styles that the user likes and sort through the closet to find 
+and output clothing that fit that description as "style_clothing". This data will be treated by Agent 3.
+
+Agent 3 (Angeline) is responsible for taking both outputs from Agent 2 and 4 into CONSIDERATION and outputs 3
+combinations of clothing that would suit both the event and the style the user is looking for. The user will have 
+the option of saving any of the combinations they like as "saved_outfit_x".   
+    If none of the combinations are to the user's taste, the AI will prompt the user for what could have been
+    missing in the combinations. The output will then be sent to Agent 4 to check if the closet has anything similar
+    in store and rerun the program with the added outfit taken into consideration.
+
+
+Agent 4 (Chanelle) will take as input a description of an event the user wants to go to. Using this description, it
+will search through "complied_closet" and find and output clothing that would fit the event. The output will be saved
+as "event_clothing". The data will be treated by Agent 3.
+
+    The bot would also accept input from Agent 3 if the user suggests an item of clothing that they wouldve thought
+    fit the combinations better. However, this involves sorting through the closet and making sure that the item of
+    clothing is in the closet in the first place
+
+And if you're wondering why Annamaria's name isn't attached to any Agent, well, guess who gets to compile all
+of this. 👍
+'''
+#imports
+import base64
+import openai #❓what is this??
+
+#INITIALIZING CHATGPT OR WHATEVER
+from langchain.chat_models import ChatOpenAI
+
+llm = ChatOpenAI(
+    openai_api_key="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",
+    
+    model_name="gpt-4.1",      
+    temperature=0              
+)
+
+openai.api_key = "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"
+
+#==========================================================
+
+#-----------------------
+
+#-----------------------
+    #AGENT 2 [ELISA]
+
+
+
+#-----------------------
+
+#----------------------
+    #AGENT 4 [CHANI]
+
+event_context = input('Describe your event.') # This is the input where the user describes their event
+def event_planner():
+    dictionary = clothe_data_management() # This is the dictionary created by Leijie's code
+    prompt = f""" You are a stylist who takes in clients to whom you recommend clothing based
+    on the situational context the client gives you, the weather at the location on a precise date
+    which you will aquire yourself. For exemple, if the client needs an
+    outfit recommendation for a gala held in a garden on x date x location, you would have to take 
+    into consideration the weather on x date at x location because the event is outside (Contrarily 
+    to see if the event was indoors). You will be picking out clothes from dictionary that contains
+    pieces of clothing and accessories as keys and a list of tags that describe the clothing as values.
+    The first tag of each list of tags will always be one of these: Top, Bottom, Dress, One-Piece, 
+    Outerwear, Footwear, Accessories. The output you give must always have at least one item 
+    that matches one of these tags. The rest of the tags in the list describe the style of the item
+    as well as the weather, it can be worn in; use these to see which items correspond with your given
+    situation. You will have to output the keys of all the items in this dictionary. Your output will only
+    be all the keys in this dictionary that match the client's request and situation, separated by \n, no
+    extra text
+    The dictionary: {dictionary}
+    Client request: {event_context}
+    your reply"""
+    event_response = llm.invoke(prompt).content
+    return(event_response)
+event_planner()
+
+
+# This function saves the output of clothing items from event_planner in a file
+
+def file_maker():
+    clothing = f'{event_planner()}'
+    event_file = open('EventF.txt', 'w')
+    event_file.write(f'{clothing}\n')
+    print(f'{clothing}')
+    event_file.close()
+
+file_maker()
+
+#-----------------------
+
+#   AGENT 3 [ANGELINE]
+
+# reads files from 3 other agents !guys can you make sure that each of your agents ouputs a file that mine can read?
+closet = open(r"vituralClosetDic.txt",'r')
+style = open(r'style.txt','r')
+event = open(r'eventF.txt','r')
+
+
+# gives the agent its role. it takes the closet, style and event from the 3 other agents as inputs
+def Agent_3(closet, style, event):
+    prompt =  f"""Hello, You are an expert of compromise, creativity, comparison and comparison, and use your skills in the domain of fashion to suggest outfits
+    to your client based on their situation. You have access to the closet which has been analyzed for you by Agent 1. Agent 2 will provide
+    you with the stylistic preferences of your client, and Agent 4 will provide you with keywords describing the client's needs. With your
+    incredible artistic and problem-solving talent, you must scan the closet for the pieces which best correspond to the information given
+    to you by Agent 2 and Agent 4. As a fashion designer, you must then make combinations with them; combine tops, bottoms, and other pieces
+    in a way that is logical and fashionable. Finally, you will give these combinations as suggestions to the client. Give the client at least
+    3 different combinations, with the respective names of 'combination one', 'combination two', and 'combination three'. Specify to the client 'combination one' as the one which matched the requirements the most closely as "most recommended".
+    Be concise, and avoid finishing with unnecessary comments.
+    closet: {closet}
+    stylistic preferences: {style}
+    keywords describing needs: {event}
+    Your combinations:
+    """
+    response = llm.invoke(prompt).content
+    return(response)
+
+
+
+# this code saves the output/combinations in a file named 'new_outfits.txt' as 'final_outfits' and also outputs it to the user. 
+final_outfits = Agent_3(closet, style, event)
+f = open("new_outfits.txt", "w")
+f.write(final_outfits)
+f.close()
+print(final_outfits)
+
+# the following code will save the outfit if the client liked it, or try again if the client did not.
+clientopinion = input('Do you like the proposed outfit? respond with either: Yes or No')
+
+# i imagine there being a file for saved outfits. i think this would be useful for the style agent (to be informed of what the user likes)
+# this code saves the outfit in a file named 'saved_outfits.txt' under a name the user chooses 
+if clientopinion == 'Yes':
+    while clientopinion == 'Yes':
+        accepted_answers = ['One','Two', 'Three']
+        newoutfit = input('which combination would you like to save? Please type either: One, Two, or Three')
+# error handling if user does not type One, Two, or Three
+        if newoutfit not in accepted_answers:
+            while newoutfit not in accepted_answers:
+                newoutfit = input('Sorry, that combination does not exist. Please type either: One, Two, or Three')
+# this code splits the file of the outfits into a list of 3 outfits. this is so the chosen outfit to save can be accessed.
+        file = open("new_outfits.txt", "r") 
+        newoutfits = file.read()
+        newoutfits = newoutfits.split('Combination')
+        for i in newoutfits:
+            if newoutfit in i:
+                chosenoutfit = i
+        file.close()
+# this code will save the chosen outfit under a name the client chooses in the file 'saved outfits'
+        newoutfitname = input('what would you like to name your saved outfit?')
+        f = open('saved_outfits.txt','a')
+        f.write(f'{newoutfitname} : {chosenoutfit}' )
+        f.close()    
+        print(f'Your new stunning outfit has been successfully saved as {newoutfitname}')
+# this code allows the user the option to save an additional outfit
+        clientopinion = input('Would you like to save another outfit? Please respond with either : Yes or No')
+    if clientopinion == 'No':
+        print('Okay, have a wonderful day you fashion icon. See you next time!')
+
+# this code takes the client's feedback into consideration by sending it to the Event agent so it gets added as new needs in the event file, then restarts the program. 
+elif clientopinion == 'No':
+        reason = input('My apologies, I will try to do better next time. What do you want in your outfit that was missing?')
+        print('Got it. I\'ll try again with that in mind.')
+        Event_Agent(reason) # replace this with the Event agent's actual name 
+        Agent_3(closet,style,event)
+
+# error handling if the user does not type yes or no
+else: 
+    print('Sorry, it seems like something went wrong. Please try again by typing one of the 2 proposed answers.')
+
+
