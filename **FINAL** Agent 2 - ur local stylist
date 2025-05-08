@@ -35,14 +35,9 @@ you will read through all the given keywords and format them {lst_aesthetics} an
 but only ONE (at a time) of following aesthetics from the keywords and, you will have to look on the internet to generate a short description of each of the named styles.
 Do NOT accept multiple words (user: weirdcore, goth; your answer should be, please name 1 aesthetic at a time and ask for the aesthetic again) Each time the user names a keyword and replies with yes,
 they can continue naming aesthetics as they see fit. the short description should look like the following example: --> athleisure: combines athletic wear with casual pieces for a sporty yet comfortable look—think leggings, sports bras, sneakers, and hoodies.
-You must only name and analyze aesthetics and styles explicitly listed as the keywords above when the user names them. Do not create or assume any fastion styles/aesthetic that isn’t in the keywords.
-Suggest a similar aesthetic in the keywords if the aesthetic the user names is not in the keywords, and ask: Out of all the aesthetics listed in the list, name 1 that matches with your preferences.
+You must only name and analyze aesthetics and styles explicitly listed as the {lst_aesthetics} above when the user names them. Do not create or assume any fastion styles/aesthetic that isn’t in the {lst_aesthetics}.
 In a NEW string, Ask the user if the description and The styles matches their aesthetic by saying: Does this aesthetic match with your preferences?(ONLY THIS QUESTION)
-If the user has no idea what their aesthetic is or if the user replies no to: Does this aesthetic match with your preferences?,
-then ask them what they like to wear by asking: What do you wear on a daily basis? (ONLY THIS QUESTION)
-and match the user's description with your descriptions of any given aesthetic (like: comfortable joggers, and loose zipped up sweaters, running shoes --> athleisure).
-When the user names what they usually wear, describe the aesthetic you think is associated with the user's. DO NOT ask: Does this aesthetic match with your preferences?
-and ask: Out of all the aesthetics listed in the list, name 1 that matches with your preferences."""
+If the user has no idea what their aesthetic is or if the user replies no to: Does this aesthetic match with your preferences?"""
         prompt = f"""Analyze this style: {user_input} following your parameters: {chatbot_prompt}"""
         return llm.invoke(prompt).content
 
@@ -61,7 +56,7 @@ def style_reccommender(file_contents, selected_styles):
 selected_styles = []
 last_style = None
 
-new_aesthetics = [x.strip().lower() for x in lst_aesthetics]
+low_aesthetics = [x.strip().lower() for x in lst_aesthetics]
 
 print("Hello, since you're here seeking for my help, pick a word from the following list:")
 print(lst_aesthetics)
@@ -72,7 +67,7 @@ while True:
     if user_input.lower() == "proceed":
 #since we can't print a fct to get our wanted results, but we can't use return: 
         filtered = style_reccommender(file_contents, selected_styles)
-#This is a list, for Angeline's code
+#This is a list OUTPUT, for Angeline's code
         print(filtered)
         break
 
